@@ -12,52 +12,35 @@ public class App {
 
 	public static void main(String[] args) throws Exception {
 
+		// When appending the hash value to each block, please append it as
+		// binary data, that is, as 32 unencoded bytes (which is 256 bits)
+
+		// If the file size is not a multiple of 1KB then the very last block
+		// will be shorter than 1KB, but all other blocks will be exactly 1KB
+
+		// quebra o arquivo em blocos de 1KB (1024 bytes)
+
+		String fileName = "video_03.mp4";
+
+		// SHA256 as the hash function
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		String fileName = "video05.mp4";
-		
+
 		HashFunction hash_function = new HashFunction();
-		hash_function.divideBlocos(fileName);
-		
-		BufferedInputStream input = new BufferedInputStream(new FileInputStream(fileName));
-		
-		ArrayList<byte[]> array_bytes=new ArrayList<byte[]>();
 
-		byte[] buffer= new byte[1024];
-	    int count;
-	    byte[] hash_bloco_anterior=new byte[1024];
-	    byte[] hash_bloco_atual=new byte[1024];
-	    
-	    //le blocos hash de 1024bytes do arquivo
-		while ((count = input.read(buffer)) > 0) {
-			//md.update(buffer, 0, count);
-			md.update(buffer, 0, count);
-			byte[] hash = md.digest();
-			
-			array_bytes.add(hash);
-			System.out.println(Base64.getEncoder().encodeToString(hash));
-		}
-		input.close();
-		System.out.println("\n\n\n\n\n\n\n\nAGORA INVERTE\n\n\n\n\n\n");
+		/*
+		 * algorithm: quebrar video em blocos de 1024 bytes CHECK calcula o hash do
+		 * ultimo bloco, anexa esse valor no bloco anterior a ele assim sucessivamente,
+		 * ate chegar no primeiro bloco H0
+		 * 
+		 * 
+		 */
 
-		// pega do ultimo byte ao primeiro
-		Collections.reverse(array_bytes);
-		hash_bloco_anterior=array_bytes.get(array_bytes.size()-1);
-		for (byte[] b : array_bytes) {
-			System.out.println(Base64.getEncoder().encodeToString(b));
-			//add two arraylists
-			//hash_bloco_atual = add(hash_bloco_anterior, b);
-		}
-		
-		//byte[] hash = md.digest();
-		//encodeToString()
-		//System.out.println(Base64.getEncoder().encodeToString(hash));
-	
-		//Instead of computing a hash of the entire file, the web site breaks the file into 1KB blocks (1024 bytes).
-		
-		//When appending the hash value to each block, please append it as
-		//binary data, that is, as 32 unencoded bytes (which is 256 bits).
-		
-		System.out.println("\n\nresposta esperada: 8e423302209494d266a7ab7e1a58ca8502c9bfdaa31dfba70aa8805d20c087bd");
+		ArrayList<byte[]> array_bytes = hash_function.divideBlocos(fileName);
+		hash_function.calculaHash(array_bytes);
+
+		System.out.println(
+				"\n\nresposta esperada video05: 8e423302209494d266a7ab7e1a58ca8502c9bfdaa31dfba70aa8805d20c087bd");
+		// video_03 : ee24473e4a369a305c9c3d54629eff01f609b8e2f61ca9cf6f3084f13fe346d6
 	}
 
 }

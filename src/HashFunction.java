@@ -31,7 +31,7 @@ public class HashFunction {
 				}
 				input.read(buffer);
 				array_bytes.add(buffer);
-				// System.out.println(Base64.getEncoder().encodeToString(buffer));
+				//System.out.println(Base64.getEncoder().encodeToString(buffer));
 			}
 
 			input.close();
@@ -46,55 +46,63 @@ public class HashFunction {
 
 	}
 
-	public void calculaHash(ArrayList<byte[]> array_bytes) throws NoSuchAlgorithmException {
-		
+	public byte[] calculaHash(ArrayList<byte[]> array_bytes) throws NoSuchAlgorithmException {
+		byte[] bloco_hash_final=null ;
 		System.out.println("vai imprimir invertido..");
 		//percorrer arraylist de forma invertida
 		for (int i = array_bytes.size() - 1; i >= 0; i--) { 
-			
 			//System.out.println(Base64.getEncoder().encodeToString(array_bytes.get(i)));
 			
+			/* calcula o hash do ultimo bloco, anexa esse valor no bloco anterior a ele
+			 * assim sucessivamente, ate chegar no primeiro bloco H0
+			*/
+			
+			// SHA256 as the hash function
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+			//array_bytes.get(i-1) == null
+			if (i == 0) {
+				bloco_hash_final = md.digest(array_bytes.get(i));
+				break;
+			}
+			
+			
+			//md.update(array_bytes.get(i));
+			byte[] bloco_hash_atual = md.digest(array_bytes.get(i));
+			// When appending the hash value to each block, please append it as
+			// binary data, that is, as 32 unencoded bytes (which is 256 bits)
+			byte[] bloco_hash_anterior = array_bytes.get(i-1);
+			byte[] anexa_no_anterior = anexa_array(bloco_hash_anterior, bloco_hash_atual);
+			
+			array_bytes.set(i-1, anexa_no_anterior);
+			
 			
 		}
+		System.out.println("H0: "+toHexString(bloco_hash_final));
 		
+		return bloco_hash_final;
 		
-		
-		StringBuilder sb = new StringBuilder();
-		// append arrays
-		byte[] ret = append(array_bytes.get(array_bytes.size() - 2), array_bytes.get(array_bytes.size() - 1));
-		System.out.println(Base64.getEncoder().encodeToString(ret));
-
-		//
-		byte[] hash_bloco_anterior = new byte[1024];
-		byte[] hash_bloco_atual = new byte[1024];
-
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		hash_bloco_anterior = md.digest(array_bytes.get(array_bytes.size() - 1));
-
-		for (int i = array_bytes.size() - 2; i > 0; i--) {
-			byte[] result = append(hash_bloco_anterior, array_bytes.get(i));
-			sb.append(Base64.getEncoder().encodeToString(result));
-			hash_bloco_anterior = md.digest(result);
-		}
-		System.out.println(sb.toString());
-
+	
 	}
-
-	public static byte[] append(byte[] a1, byte[] a2) {
-		byte[] ret = new byte[a1.length + a2.length];
-		System.arraycopy(a1, 0, ret, 0, a1.length);
-		System.arraycopy(a2, 0, ret, a1.length, a2.length);
-		return ret;
-	}
+	
+	// anexa array2 no final de array1
+	public static byte[] anexa_array(byte[] array1, byte[] array2){
+        byte[] resultado = new byte[array1.length + array2.length];
+        System.arraycopy(array1, 0, resultado, 0, array1.length);
+        System.arraycopy(array2, 0, resultado, array1.length, array2.length);
+        return resultado;
+    }
 
 	// Funcao para converter um array de bytes para uma String em hexadecimal
 	public static String toHexString(byte[] array) {
-		return javax.xml.bind.DatatypeConverter.printHexBinary(array);
+		return javax.xml.bind.DatatypeConverter.printHexBinary(array).toLowerCase();
 	}
 	
 	/*
 	 * Fontes:
 	 * https://www.geeksforgeeks.org/reverse-an-arraylist-in-java/
+	 * https://www.devmedia.com.br/como-funciona-a-criptografia-hash-em-java/31139
+	 * https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html
 	 * */
 
 }
