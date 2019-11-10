@@ -29,11 +29,5 @@ public class App {
 		hash_function.calculaHash(array_bytes);
 
 	}
-	
-	/*
-	 * Fontes:
-	 * https://www.geeksforgeeks.org/reverse-an-arraylist-in-java/
-	 * https://www.devmedia.com.br/como-funciona-a-criptografia-hash-em-java/31139
-	 * https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html
-	 * */
+
 }

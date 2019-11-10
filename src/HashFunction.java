@@ -26,29 +26,29 @@ public class HashFunction {
 	 */
 	public static ArrayList<byte[]> divideBlocos(String fileName) {
 		try {
-			BufferedInputStream input = new BufferedInputStream(new FileInputStream(fileName));
-			System.out.println(input.hashCode());
+			BufferedInputStream arquivo_video = new BufferedInputStream(new FileInputStream(fileName));
+			System.out.println(arquivo_video.hashCode());
 
 			ArrayList<byte[]> array_bytes = new ArrayList<byte[]>();
 			byte[] buffer;
 			
-			while (input.available() > 0) {
+			while (arquivo_video.available() > 0) {
 				
 				// Se o bloco for menor que 1024 bytes, entao o bloco sera o tamanho disponivel
-				if (input.available() < 1024) {
-					buffer = new byte[input.available()];
+				if (arquivo_video.available() < 1024) {
+					buffer = new byte[arquivo_video.available()];
 				} 
 				// Todos os demais blocos serao exatamente de tamanho 1024 bytes
 				else {
 					buffer = new byte[1024];
 				}				
 				// Realiza a divisao do video em blocos
-				input.read(buffer);
+				arquivo_video.read(buffer);
 				// Armazena bloco em uma posicao do arraylist
 				array_bytes.add(buffer);
 			}
 
-			input.close();
+			arquivo_video.close();
 
 			return array_bytes;
 
@@ -74,21 +74,23 @@ public class HashFunction {
 			// Funcao Hash SHA256
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 
+			// Se for o primeiro bloco h0, encerra a execucao e imprime o resultado
 			if (i == 0) {
 				bloco_hash_final = md.digest(array_bytes.get(i));
 				break;
 			}
+			
 			// Calcula hash do bloco atual
 			byte[] bloco_hash_atual = md.digest(array_bytes.get(i));
 
 			// Anexa valor do hash calculado para o bloco atual no bloco anterior a ele
 			byte[] bloco_hash_anterior = array_bytes.get(i - 1);
-			byte[] anexa_no_anterior = anexa_array(bloco_hash_anterior, bloco_hash_atual);
+			byte[] novo_bloco = anexa_array(bloco_hash_anterior, bloco_hash_atual);
 
-			array_bytes.set(i - 1, anexa_no_anterior);
+			array_bytes.set(i - 1, novo_bloco);
 		}
-		// Imprime o hash calculado H0
-		System.out.println("H0: " + toHexString(bloco_hash_final));
+		// Imprime o hash final calculado 'h0'
+		System.out.println("h0: " + toHexString(bloco_hash_final));
 
 		return bloco_hash_final;
 
