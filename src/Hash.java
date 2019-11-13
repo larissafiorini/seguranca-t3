@@ -5,46 +5,44 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 /*
- * HashFunction
  * 
- * Classe que realiza a divisao do video em blocos de 1KB e calcula o hash H0 utilizando SHA-256.
+ * Classe que realiza a divisao do video em blocos de 1KB e calcula o hash h0 utilizando o algoritmo de hash seguro SHA-256.
  * 
  * Autora: Larissa Fiorini Martins 
  * Disciplina: Seguranca de Sistemas 
  * Professor: Avelino Zorzo
  * 
  */
-public class HashFunction {
+public class Hash {
 
-	public HashFunction() {
+	public Hash() {
 
 	}
 
 	/*
 	 * Funcao que divide o arquivo de video em blocos de 1KB (1024 bytes). Os blocos
-	 * sao armazenados em um arraylist retornado pela funcao.
+	 * sao armazenados em um ArrayList retornado pela funcao.
 	 */
 	public static ArrayList<byte[]> divideBlocos(String fileName) {
 		try {
 			BufferedInputStream arquivo_video = new BufferedInputStream(new FileInputStream(fileName));
-			System.out.println(arquivo_video.hashCode());
 
 			ArrayList<byte[]> array_bytes = new ArrayList<byte[]>();
 			byte[] buffer;
-			
+
 			while (arquivo_video.available() > 0) {
-				
-				// Se o bloco for menor que 1024 bytes, entao o bloco sera o tamanho disponivel
+
+				// Se o bloco for menor que 1024 bytes, entao o bloco sera do tamanho disponivel
 				if (arquivo_video.available() < 1024) {
 					buffer = new byte[arquivo_video.available()];
-				} 
+				}
 				// Todos os demais blocos serao exatamente de tamanho 1024 bytes
 				else {
 					buffer = new byte[1024];
-				}				
+				}
 				// Realiza a divisao do video em blocos
 				arquivo_video.read(buffer);
-				// Armazena bloco em uma posicao do arraylist
+				// Armazena bloco em uma posicao do ArrayList
 				array_bytes.add(buffer);
 			}
 
@@ -62,16 +60,16 @@ public class HashFunction {
 	/*
 	 * Funcao que recebe os blocos do video e inicia calculando o hash SHA-256 do
 	 * ultimo bloco, apos anexa esse valor no bloco anterior a ele, e assim
-	 * sucessivamente ate chegar no primeiro bloco HO. Por fim, imprime o hash HO
+	 * sucessivamente ate chegar no primeiro bloco hO. Por fim, imprime o hash hO
 	 * calculado.
 	 */
 	public byte[] calculaHash(ArrayList<byte[]> array_bytes) throws NoSuchAlgorithmException {
 		byte[] bloco_hash_final = null;
 
-		// Percorre arraylist de forma invertida
+		// Percorre ArrayList de forma invertida
 		for (int i = array_bytes.size() - 1; i >= 0; i--) {
 
-			// Funcao Hash SHA256
+			// Funcao Hash SHA-256
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 
 			// Se for o primeiro bloco h0, encerra a execucao e imprime o resultado
@@ -79,7 +77,7 @@ public class HashFunction {
 				bloco_hash_final = md.digest(array_bytes.get(i));
 				break;
 			}
-			
+
 			// Calcula hash do bloco atual
 			byte[] bloco_hash_atual = md.digest(array_bytes.get(i));
 

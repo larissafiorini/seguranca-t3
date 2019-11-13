@@ -2,9 +2,10 @@ import java.util.ArrayList;
 
 public class App {
 	/*
-	 * Hash Function
 	 * 
-	 * Esse programa realiza a 
+	 * Esse programa realiza a implementacao de um programa que dado um arquivo de
+	 * video, seja garantida a integridade dos dados do video, dividido em blocos de
+	 * 1KB, utilizando o algoritmo de hash seguro SHA-256.
 	 * 
 	 * Autora: Larissa Fiorini Martins 
 	 * Disciplina: Seguranca de Sistemas 
@@ -12,21 +13,21 @@ public class App {
 	 * 
 	 */
 	public static void main(String[] args) throws Exception {
-		
+
 		if (args.length < 1) {
 			System.out.println("Run: java -jar Hash.jar <nome_video>");
 			System.exit(1);
 		}
 		// Nome do arquivo de entrada
-		String fileName = args[0];
+		String arquivo_video = args[0];
 
-		HashFunction hash_function = new HashFunction();
+		Hash hash = new Hash();
 
-		// Divide video em blocos de 1024 bytes 
-		ArrayList<byte[]> array_bytes = hash_function.divideBlocos(fileName);
-		
+		// Divide video em blocos de 1024 bytes
+		ArrayList<byte[]> array_bytes = hash.divideBlocos(arquivo_video);
+
 		// Calcula hash do primeiro bloco H0
-		hash_function.calculaHash(array_bytes);
+		hash.calculaHash(array_bytes);
 
 	}
 

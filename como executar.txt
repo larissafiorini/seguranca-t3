@@ -1,0 +1,9 @@
+Para executar o programa, basta rodar o "Hash.jar" passando o vídeo desejado como parâmetro,
+no seguinte formato:
+
+	java -jar Hash.jar <nome_video>
+
+Ex:  java -jar Hash.jar video_05.mp4
+
+
+Obs.: O código foi desenvovido utilizando o Eclipse IDE.
